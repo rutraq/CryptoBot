@@ -14,17 +14,21 @@ namespace WindowsFormsApp1
     {
         GetCurrency currency = new GetCurrency();
         MyAccount account = new MyAccount();
+        Telegram telegram = new Telegram();
         public Form1()
         {
             InitializeComponent();
             Dictionary<string, string> dict = currency.ParseJSON();
             label1.Text = dict["lprice"];
+            telegram.Bot();
+            telegram.Text_for_client = "Курс XRP/USD: " + dict["lprice"];
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
             Dictionary<string, string> dict = currency.ParseJSON();
             label1.Text = dict["lprice"];
+            telegram.Text_for_client = "Курс XRP/USD: " + dict["lprice"];
         }
 
         private void TelegramToolStripMenuItem_Click(object sender, EventArgs e)
@@ -37,7 +41,6 @@ namespace WindowsFormsApp1
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(account.GetMyBalance());
         }
     }
 }

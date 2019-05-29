@@ -86,13 +86,13 @@
             // telegramToolStripMenuItem
             // 
             this.telegramToolStripMenuItem.Name = "telegramToolStripMenuItem";
-            this.telegramToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.telegramToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.telegramToolStripMenuItem.Text = "Telegram";
             this.telegramToolStripMenuItem.Click += new System.EventHandler(this.TelegramToolStripMenuItem_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(157, 179);
+            this.button1.Location = new System.Drawing.Point(173, 111);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
