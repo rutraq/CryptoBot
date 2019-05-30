@@ -9,7 +9,6 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         GetCurrency currency = new GetCurrency();
-        MyAccount account = new MyAccount();
         Telegram telegram = new Telegram();
         public Form1()
         {

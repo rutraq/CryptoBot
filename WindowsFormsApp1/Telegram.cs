@@ -3,6 +3,8 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using System.Threading;
 using Telegram.Bot.Types;
+using LibraryCex;
+using System.Collections.Generic;
 
 namespace WindowsFormsApp1
 {
@@ -10,6 +12,7 @@ namespace WindowsFormsApp1
     {
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
+        private static List<string> commands = new List<string>() { "/curse", "/balance" };
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
 
@@ -27,12 +30,13 @@ namespace WindowsFormsApp1
             {
                 return;
             }
-            else if (text != "/curse")
+            else if (!commands.Contains(text))
             {
                 await botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
                     text: "Выберите команду\n" +
-                    "/curse - вывод курса"
+                    "/curse - вывод курса\n" +
+                    "/balance - вывод баланса"
                     );
             }
             else if (text == "/curse")
@@ -40,6 +44,15 @@ namespace WindowsFormsApp1
                 await botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
                     text: text_for_client
+                    );
+            }
+            else if (text == "/balance")
+            {
+                Cex cex = new Cex();
+                decimal usd = cex.Balance_USD();
+                await botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text:  "Ваш баланc: " + Convert.ToString(usd) + "$"
                     );
             }
         }
