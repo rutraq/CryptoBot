@@ -1,10 +1,9 @@
 ﻿using System;
 using Telegram.Bot;
 using Telegram.Bot.Args;
-using System.Threading;
-using Telegram.Bot.Types;
 using LibraryCex;
 using System.Collections.Generic;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace WindowsFormsApp1
 {
@@ -20,7 +19,22 @@ namespace WindowsFormsApp1
         {
             botClient = new TelegramBotClient("640616392:AAFbJ4MLr-EHV4BqdeoSqxxABss1CRUzQxU") { Timeout = TimeSpan.FromSeconds(10) };
             botClient.OnMessage += Message;
+            botClient.OnCallbackQuery += BotClient_OnCallbackQuery;
             botClient.StartReceiving();
+        }
+
+        private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        {
+            string currency = e.CallbackQuery.Data;
+            Cex cex = new Cex();
+            if (currency == "USD")
+            {
+                decimal usd = cex.Balance_USD();
+                await botClient.AnswerCallbackQueryAsync(
+                    callbackQueryId: e.CallbackQuery.Id,
+                    text: "Ваш баланс: " + Convert.ToString(usd) + "$"
+                    );
+            }
         }
 
         public static async void Message(object sender, MessageEventArgs e)
@@ -48,11 +62,19 @@ namespace WindowsFormsApp1
             }
             else if (text == "/balance")
             {
-                Cex cex = new Cex();
-                decimal usd = cex.Balance_USD();
+                var keyboard = new InlineKeyboardMarkup(new[]
+                {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("USD"),
+                        InlineKeyboardButton.WithCallbackData("XRP")
+                    }
+                }
+                );
                 await botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
-                    text:  "Ваш баланc: " + Convert.ToString(usd) + "$"
+                    replyMarkup: keyboard,
+                    text: "Выберите валюту"
                     );
             }
         }
