@@ -4,6 +4,7 @@ using Telegram.Bot.Args;
 using LibraryCex;
 using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
+using System.Text.RegularExpressions;
 
 namespace WindowsFormsApp1
 {
@@ -12,6 +13,7 @@ namespace WindowsFormsApp1
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
         private static List<string> commands = new List<string>() { "/curse", "/balance", "/register" };
+        private static Dictionary<string, bool> register = new Dictionary<string, bool>();
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
 
@@ -35,55 +37,93 @@ namespace WindowsFormsApp1
                     text: "Ваш баланс: " + Convert.ToString(usd) + "$"
                     );
             }
+            else if (currency == "XRP")
+            {
+                decimal xrp = cex.Balance_XRP();
+                await botClient.AnswerCallbackQueryAsync(
+                    callbackQueryId: e.CallbackQuery.Id,
+                    text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
+                    );
+            }
         }
 
         public static async void Message(object sender, MessageEventArgs e)
         {
             var text = e?.Message?.Text;
-            if (text == null)
+            bool check = true;
+            try
             {
-                return;
-            }
-            else if (!commands.Contains(text))
-            {
-                await botClient.SendTextMessageAsync(
-                    chatId: e.Message.Chat,
-                    text: "Выберите команду\n" +
-                    "/register - регистрация\n" +
-                    "/curse - вывод курса\n" +
-                    "/balance - вывод баланса"
-                    );
-            }
-            else if (text == "/curse")
-            {
-                await botClient.SendTextMessageAsync(
-                    chatId: e.Message.Chat,
-                    text: text_for_client
-                    );
-            }
-            else if (text == "/balance")
-            {
-                var keyboard = new InlineKeyboardMarkup(new[]
+                if (register[Convert.ToString(e.Message.Chat)] == true)
                 {
+                    Regex reg = new Regex(@"^\w+, \w+, \w+$");
+                    if (!reg.IsMatch(text))
+                    {
+                        check = false;
+                        register.Remove(Convert.ToString(e.Message.Chat));
+                    }
+                }
+            }
+            catch (KeyNotFoundException)
+            {
+                check = false;
+            }
+            if (!check)
+            {
+                if (text == null)
+                {
+                    return;
+                }
+                else if (!commands.Contains(text))
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Выберите команду\n" +
+                        "/register - регистрация\n" +
+                        "/curse - вывод курса\n" +
+                        "/balance - вывод баланса"
+                        );
+                }
+                else if (text == "/curse")
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: text_for_client
+                        );
+                }
+                else if (text == "/balance")
+                {
+                    var keyboard = new InlineKeyboardMarkup(new[]
+                    {
                     new[]
                     {
                         InlineKeyboardButton.WithCallbackData("USD"),
                         InlineKeyboardButton.WithCallbackData("XRP")
                     }
                 }
-                );
-                await botClient.SendTextMessageAsync(
-                    chatId: e.Message.Chat,
-                    replyMarkup: keyboard,
-                    text: "Выберите валюту"
                     );
+                    await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        replyMarkup: keyboard,
+                        text: "Выберите валюту"
+                        );
+                }
+                else if (text == "/register")
+                {
+                    await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Введите ваш User Id, Key и Secret key в формате\n" +
+                        "user_id, key, secret_key"
+                        );
+                    register[Convert.ToString(e.Message.Chat)] = true;
+                } 
             }
-            else if (text == "/register")
+            else
             {
                 await botClient.SendTextMessageAsync(
-                    chatId: e.Message.Chat,
-                    text: "Введите ваш User Id"
-                    );
+                        chatId: e.Message.Chat,
+                        text: "Вы зарегистрированы"
+                        );
+                register.Remove(Convert.ToString(e.Message.Chat));
             }
         }
     }
