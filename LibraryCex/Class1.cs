@@ -16,6 +16,12 @@ namespace LibraryCex
             decimal usdBalance = balance.USD.Available;
             return usdBalance;
         }
+        public decimal Balance_XRP()
+        {
+            Balance balance = client.Account.GetBalanceAsync().Result;
+            decimal xrpBalance = balance.XRP.Available;
+            return xrpBalance;
+        }
 
         public decimal LastPrice()
         {
