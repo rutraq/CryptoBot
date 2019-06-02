@@ -11,7 +11,7 @@ namespace WindowsFormsApp1
     {
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/curse", "/balance" };
+        private static List<string> commands = new List<string>() { "/curse", "/balance", "/register" };
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
 
@@ -49,6 +49,7 @@ namespace WindowsFormsApp1
                 await botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
                     text: "Выберите команду\n" +
+                    "/register - регистрация\n" +
                     "/curse - вывод курса\n" +
                     "/balance - вывод баланса"
                     );
@@ -75,6 +76,13 @@ namespace WindowsFormsApp1
                     chatId: e.Message.Chat,
                     replyMarkup: keyboard,
                     text: "Выберите валюту"
+                    );
+            }
+            else if (text == "/register")
+            {
+                await botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: "Введите ваш User Id"
                     );
             }
         }
