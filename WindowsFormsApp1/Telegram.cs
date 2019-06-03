@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
 
 namespace WindowsFormsApp1
 {
@@ -15,6 +16,7 @@ namespace WindowsFormsApp1
         public static string text_for_client = "";
         private static List<string> commands = new List<string>() { "/curse", "/balance", "/register" };
         private static Dictionary<string, bool> register = new Dictionary<string, bool>();
+        private static Dictionary<string, string> logs = new Dictionary<string, string>();
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
 
@@ -61,6 +63,10 @@ namespace WindowsFormsApp1
                     {
                         check = false;
                         register.Remove(e.Message.Chat.Username);
+                        await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Неверный формат"
+                        );
                     }
                 }
             }
@@ -129,6 +135,17 @@ namespace WindowsFormsApp1
                     messageId: e.Message.MessageId
                     );
                 register.Remove(e.Message.Chat.Username);
+                await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Выберите команду\n" +
+                        "/register - регистрация\n" +
+                        "/curse - вывод курса\n" +
+                        "/balance - вывод баланса"
+                        );
+                DataBase data = new DataBase();
+                var txt = text.Split(',').Select(x=>x.Where(y=>!Char.IsWhiteSpace(y))).Select(x=>string.Concat(x)).ToList();
+                string username = e.Message.Chat.Username;
+                data.Insert(username, txt[0], txt[1], txt[2]);
             }
         }
     }

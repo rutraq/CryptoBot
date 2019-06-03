@@ -8,23 +8,27 @@ namespace LibraryCex
 {
     public class Cex
     {
-        static ApiCredentials credentials = new ApiCredentials("up112448722", "74FTgNUB0xDlXKB17us6EOPqQ", "9gZbn9aNyvpJZZRv2zu1lgchbE");
-        static CexClient client = new CexClient(credentials);
-        public decimal Balance_USD()
+        public decimal Balance_USD(string user_id, string key, string secret_key)
         {
+            ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
+            CexClient client = new CexClient(credentials);
             Balance balance = client.Account.GetBalanceAsync().Result;
             decimal usdBalance = balance.USD.Available;
             return usdBalance;
         }
-        public decimal Balance_XRP()
+        public decimal Balance_XRP(string user_id, string key, string secret_key)
         {
+            ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
+            CexClient client = new CexClient(credentials);
             Balance balance = client.Account.GetBalanceAsync().Result;
             decimal xrpBalance = balance.XRP.Available;
             return xrpBalance;
         }
 
-        public decimal LastPrice()
+        public decimal LastPrice(string user_id, string key, string secret_key)
         {
+            ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
+            CexClient client = new CexClient(credentials);
             var lastPrice = client.GetLastPriceAsync(SymbolPairs.BTC_USD);
             return lastPrice.Result;
         }
