@@ -39,11 +39,21 @@ namespace WindowsFormsApp1
             {
                 try
                 {
-                    decimal usd = cex.Balance_USD(info[0], info[1], info[2]);
-                    await botClient.AnswerCallbackQueryAsync(
-                                callbackQueryId: e.CallbackQuery.Id,
-                                text: "Ваш баланс: " + Convert.ToString(usd) + "$"
-                                );
+                    try
+                    {
+                        decimal usd = cex.Balance_USD(info[0], info[1], info[2]);
+                        await botClient.AnswerCallbackQueryAsync(
+                                    callbackQueryId: e.CallbackQuery.Id,
+                                    text: "Ваш баланс: " + Convert.ToString(usd) + "$"
+                                    );
+                    }
+                    catch (AggregateException)
+                    {
+                        await botClient.AnswerCallbackQueryAsync(
+                                    callbackQueryId: e.CallbackQuery.Id,
+                                    text: "Ваши регистрационные данные были не верны"
+                                    );
+                    }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
@@ -66,11 +76,21 @@ namespace WindowsFormsApp1
             {
                 try
                 {
-                    decimal xrp = cex.Balance_XRP(info[0], info[1], info[2]);
-                    await botClient.AnswerCallbackQueryAsync(
-                        callbackQueryId: e.CallbackQuery.Id,
-                        text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
-                        );
+                    try
+                    {
+                        decimal xrp = cex.Balance_XRP(info[0], info[1], info[2]);
+                        await botClient.AnswerCallbackQueryAsync(
+                            callbackQueryId: e.CallbackQuery.Id,
+                            text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
+                            );
+                    }
+                    catch (AggregateException)
+                    {
+                        await botClient.AnswerCallbackQueryAsync(
+                                    callbackQueryId: e.CallbackQuery.Id,
+                                    text: "Ваши регистрационные данные были не верны"
+                                    );
+                    }
                 }
                 catch (ArgumentOutOfRangeException)
                 {

@@ -10,18 +10,34 @@ namespace LibraryCex
     {
         public decimal Balance_USD(string user_id, string key, string secret_key)
         {
+            decimal usdBalance = 0;
             ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
             CexClient client = new CexClient(credentials);
-            Balance balance = client.Account.GetBalanceAsync().Result;
-            decimal usdBalance = balance.USD.Available;
+            try
+            {
+                Balance balance = client.Account.GetBalanceAsync().Result;
+            }
+            catch (AggregateException)
+            {
+                throw;
+            }
+            usdBalance = balance.USD.Available;
             return usdBalance;
         }
         public decimal Balance_XRP(string user_id, string key, string secret_key)
         {
+            decimal xrpBalance = 0;
             ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
             CexClient client = new CexClient(credentials);
-            Balance balance = client.Account.GetBalanceAsync().Result;
-            decimal xrpBalance = balance.XRP.Available;
+            try
+            {
+                Balance balance = client.Account.GetBalanceAsync().Result;
+            }
+            catch (AggregateException)
+            {
+                throw;
+            }
+            xrpBalance = balance.XRP.Available;
             return xrpBalance;
         }
 
