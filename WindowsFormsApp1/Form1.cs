@@ -36,12 +36,12 @@ namespace WindowsFormsApp1
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            Cex cex = new Cex();
-            decimal s = new decimal();
-            Thread thread = new Thread(delegate () { s = cex.Balance_USD(); });
-            thread.Start();
-            thread.Join();
-            MessageBox.Show(Convert.ToString(s));
+            //Cex cex = new Cex();
+            //decimal s = new decimal();
+            //Thread thread = new Thread(delegate () { s = cex.Balance_USD(); });
+            //thread.Start();
+            //thread.Join();
+            //MessageBox.Show(Convert.ToString(s));
         }
     }
 }

@@ -5,8 +5,9 @@ using LibraryCex;
 using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Text.RegularExpressions;
-using System.IO;
+using Telegram.Bot.Exceptions;
 using System.Linq;
+using Npgsql;
 
 namespace WindowsFormsApp1
 {
@@ -30,28 +31,70 @@ namespace WindowsFormsApp1
 
         private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
+            DataBase data = new DataBase();
+            List<string> info = data.Getinfo(e.CallbackQuery.From.Username);
             string currency = e.CallbackQuery.Data;
             Cex cex = new Cex();
             if (currency == "USD")
             {
-                decimal usd = cex.Balance_USD();
-                await botClient.AnswerCallbackQueryAsync(
-                    callbackQueryId: e.CallbackQuery.Id,
-                    text: "Ваш баланс: " + Convert.ToString(usd) + "$"
-                    );
+                try
+                {
+                    decimal usd = cex.Balance_USD(info[0], info[1], info[2]);
+                    await botClient.AnswerCallbackQueryAsync(
+                                callbackQueryId: e.CallbackQuery.Id,
+                                text: "Ваш баланс: " + Convert.ToString(usd) + "$"
+                                );
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    try
+                    {
+                        await botClient.AnswerCallbackQueryAsync(
+                                                callbackQueryId: e.CallbackQuery.Id,
+                                                text: "Вы не зарегистрированы"
+                                                );
+                    }
+                    catch (InvalidParameterException)
+                    {
+                    }
+                }
+                catch (InvalidParameterException)
+                {
+                }
             }
             else if (currency == "XRP")
             {
-                decimal xrp = cex.Balance_XRP();
-                await botClient.AnswerCallbackQueryAsync(
-                    callbackQueryId: e.CallbackQuery.Id,
-                    text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
-                    );
+                try
+                {
+                    decimal xrp = cex.Balance_XRP(info[0], info[1], info[2]);
+                    await botClient.AnswerCallbackQueryAsync(
+                        callbackQueryId: e.CallbackQuery.Id,
+                        text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
+                        );
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    try
+                    {
+                        await botClient.AnswerCallbackQueryAsync(
+                                                callbackQueryId: e.CallbackQuery.Id,
+                                                text: "Вы не зарегистрированы"
+                                                );
+                    }
+                    catch (InvalidParameterException)
+                    {
+                    }
+                }
+                catch (InvalidParameterException)
+                {
+                }
             }
         }
 
         public static async void Message(object sender, MessageEventArgs e)
         {
+            DataBase data = new DataBase();
+            List<string> info = data.Getinfo(e.Message.Chat.Username);
             var text = e?.Message?.Text;
             bool check = true;
             try
@@ -116,13 +159,23 @@ namespace WindowsFormsApp1
                 }
                 else if (text == "/register")
                 {
-                    await botClient.SendTextMessageAsync(
-                        chatId: e.Message.Chat,
-                        text: "Введите ваш User Id, Key и Secret key в формате\n" +
-                        "user_id, key, secret_key"
-                        );
-                    register[e.Message.Chat.Username] = true;
-                } 
+                    if (info.Count == 0)
+                    {
+                        await botClient.SendTextMessageAsync(
+                                    chatId: e.Message.Chat,
+                                    text: "Введите ваш User Id, Key и Secret key в формате\n" +
+                                    "user_id, key, secret_key"
+                                    );
+                        register[e.Message.Chat.Username] = true; 
+                    }
+                    else
+                    {
+                        await botClient.SendTextMessageAsync(
+                                    chatId: e.Message.Chat,
+                                    text: "Вы уже зарегистрированы"
+                                    );
+                    }
+                }
             }
             else
             {
@@ -142,8 +195,7 @@ namespace WindowsFormsApp1
                         "/curse - вывод курса\n" +
                         "/balance - вывод баланса"
                         );
-                DataBase data = new DataBase();
-                var txt = text.Split(',').Select(x=>x.Where(y=>!Char.IsWhiteSpace(y))).Select(x=>string.Concat(x)).ToList();
+                var txt = text.Split(',').Select(x => x.Where(y => !Char.IsWhiteSpace(y))).Select(x => string.Concat(x)).ToList();
                 string username = e.Message.Chat.Username;
                 data.Insert(username, txt[0], txt[1], txt[2]);
             }
