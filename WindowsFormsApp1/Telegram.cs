@@ -7,7 +7,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 using System.Text.RegularExpressions;
 using Telegram.Bot.Exceptions;
 using System.Linq;
-using Npgsql;
 
 namespace WindowsFormsApp1
 {
@@ -145,13 +144,6 @@ namespace WindowsFormsApp1
                 }
                 else if (!commands.Contains(text))
                 {
-                    if (e.Message.Chat.Username == "evgen333221")
-                    {
-                        await botClient.SendTextMessageAsync(
-                        chatId: e.Message.Chat,
-                        text: "Отдай наклейку"
-                        );
-                    }
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: "Выберите команду\n" +
