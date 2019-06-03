@@ -5,6 +5,7 @@ using LibraryCex;
 using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace WindowsFormsApp1
 {
@@ -53,13 +54,13 @@ namespace WindowsFormsApp1
             bool check = true;
             try
             {
-                if (register[Convert.ToString(e.Message.Chat)] == true)
+                if (register[e.Message.Chat.Username] == true)
                 {
                     Regex reg = new Regex(@"^\w+, \w+, \w+$");
                     if (!reg.IsMatch(text))
                     {
                         check = false;
-                        register.Remove(Convert.ToString(e.Message.Chat));
+                        register.Remove(e.Message.Chat.Username);
                     }
                 }
             }
@@ -114,7 +115,7 @@ namespace WindowsFormsApp1
                         text: "Введите ваш User Id, Key и Secret key в формате\n" +
                         "user_id, key, secret_key"
                         );
-                    register[Convert.ToString(e.Message.Chat)] = true;
+                    register[e.Message.Chat.Username] = true;
                 } 
             }
             else
@@ -123,7 +124,11 @@ namespace WindowsFormsApp1
                         chatId: e.Message.Chat,
                         text: "Вы зарегистрированы"
                         );
-                register.Remove(Convert.ToString(e.Message.Chat));
+                await botClient.DeleteMessageAsync(
+                    chatId: e.Message.Chat,
+                    messageId: e.Message.MessageId
+                    );
+                register.Remove(e.Message.Chat.Username);
             }
         }
     }
