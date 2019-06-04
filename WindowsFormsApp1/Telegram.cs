@@ -14,7 +14,7 @@ namespace WindowsFormsApp1
     {
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/curse", "/balance", "/register" };
+        private static List<string> commands = new List<string>() { "/course", "/balance", "/register" };
         private static Dictionary<string, bool> register = new Dictionary<string, bool>();
         private static Dictionary<string, string> logs = new Dictionary<string, string>();
 
@@ -31,7 +31,7 @@ namespace WindowsFormsApp1
         private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             DataBase data = new DataBase();
-            List<string> info = data.Getinfo(e.CallbackQuery.From.Username);
+            List<string> info = data.Getinfo(Convert.ToString(e.CallbackQuery.From.Id));
             string currency = e.CallbackQuery.Data;
             Cex cex = new Cex();
             if (currency == "USD")
@@ -113,18 +113,18 @@ namespace WindowsFormsApp1
         public static async void Message(object sender, MessageEventArgs e)
         {
             DataBase data = new DataBase();
-            List<string> info = data.Getinfo(e.Message.Chat.Username);
+            List<string> info = data.Getinfo(Convert.ToString(e.Message.Chat.Id));
             var text = e?.Message?.Text;
             bool check = true;
             try
             {
-                if (register[e.Message.Chat.Username] == true)
+                if (register[Convert.ToString(e.Message.Chat.Id)] == true)
                 {
                     Regex reg = new Regex(@"^\w+, \w+, \w+$");
                     if (!reg.IsMatch(text))
                     {
                         check = false;
-                        register.Remove(e.Message.Chat.Username);
+                        register.Remove(Convert.ToString(e.Message.Chat.Id));
                         await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: "Неверный формат"
@@ -148,11 +148,11 @@ namespace WindowsFormsApp1
                         chatId: e.Message.Chat,
                         text: "Выберите команду\n" +
                         "/register - регистрация\n" +
-                        "/curse - вывод курса\n" +
+                        "/course - вывод курса\n" +
                         "/balance - вывод баланса"
                         );
                 }
-                else if (text == "/curse")
+                else if (text == "/course")
                 {
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
@@ -185,7 +185,7 @@ namespace WindowsFormsApp1
                                     text: "Введите ваш User Id, Key и Secret key в формате\n" +
                                     "user_id, key, secret_key"
                                     );
-                        register[e.Message.Chat.Username] = true; 
+                        register[Convert.ToString(e.Message.Chat.Id)] = true;
                     }
                     else
                     {
@@ -206,16 +206,16 @@ namespace WindowsFormsApp1
                     chatId: e.Message.Chat,
                     messageId: e.Message.MessageId
                     );
-                register.Remove(e.Message.Chat.Username);
+                register.Remove(Convert.ToString(e.Message.Chat.Id));
                 await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         text: "Выберите команду\n" +
                         "/register - регистрация\n" +
-                        "/curse - вывод курса\n" +
+                        "/course - вывод курса\n" +
                         "/balance - вывод баланса"
                         );
                 var txt = text.Split(',').Select(x => x.Where(y => !Char.IsWhiteSpace(y))).Select(x => string.Concat(x)).ToList();
-                string username = e.Message.Chat.Username;
+                string username = Convert.ToString(e.Message.Chat.Id);
                 data.Insert(username, txt[0], txt[1], txt[2]);
             }
         }
