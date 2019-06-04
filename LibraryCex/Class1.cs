@@ -16,12 +16,12 @@ namespace LibraryCex
             try
             {
                 Balance balance = client.Account.GetBalanceAsync().Result;
+                usdBalance = balance.USD.Available;
             }
             catch (AggregateException)
             {
                 throw;
             }
-            usdBalance = balance.USD.Available;
             return usdBalance;
         }
         public decimal Balance_XRP(string user_id, string key, string secret_key)
@@ -32,12 +32,12 @@ namespace LibraryCex
             try
             {
                 Balance balance = client.Account.GetBalanceAsync().Result;
+                xrpBalance = balance.XRP.Available;
             }
             catch (AggregateException)
             {
                 throw;
             }
-            xrpBalance = balance.XRP.Available;
             return xrpBalance;
         }
 

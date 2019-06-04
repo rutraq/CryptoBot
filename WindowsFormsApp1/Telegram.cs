@@ -80,7 +80,7 @@ namespace WindowsFormsApp1
                         decimal xrp = cex.Balance_XRP(info[0], info[1], info[2]);
                         await botClient.AnswerCallbackQueryAsync(
                             callbackQueryId: e.CallbackQuery.Id,
-                            text: "Ваш баланс: " + Convert.ToString(xrp) + "$"
+                            text: "Ваш баланс: " + Convert.ToString(xrp) + " XRP"
                             );
                     }
                     catch (AggregateException)
