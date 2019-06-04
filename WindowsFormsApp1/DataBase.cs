@@ -7,7 +7,7 @@ namespace WindowsFormsApp1
 {
     class DataBase
     {
-        public void Insert(string username, string userId, string key, string secretKey)
+        public void Insert(int username, string userId, string key, string secretKey)
         {
             NpgsqlConnection conn = new NpgsqlConnection("Server=isilo.db.elephantsql.com;Port=5432;User Id=eiezunnd;Password=xoGAEzBfYFPTBbGLvTtV9ZU3Sdx2jsnb;Database=eiezunnd;");
             conn.Open();
@@ -15,7 +15,7 @@ namespace WindowsFormsApp1
             command.ExecuteNonQuery();
             conn.Close();
         }
-        public List<string> Getinfo(string username)
+        public List<string> Getinfo(int username)
         {
             List<string> info = new List<string>();
             NpgsqlConnection conn = new NpgsqlConnection("Server=isilo.db.elephantsql.com;Port=5432;User Id=eiezunnd;Password=xoGAEzBfYFPTBbGLvTtV9ZU3Sdx2jsnb;Database=eiezunnd;");
