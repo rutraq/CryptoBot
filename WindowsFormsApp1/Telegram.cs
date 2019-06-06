@@ -17,10 +17,10 @@ namespace WindowsFormsApp1
         private static List<string> commands = new List<string>() { "/course", "/balance", "/register" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<string, string> logs = new Dictionary<string, string>();
-        private static string messageFromUser;
+        private static int IdMessage;
+
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
-        public static string MessageFromUser { get => messageFromUser; set => messageFromUser = value; }
 
         public void Bot()
         {
@@ -28,6 +28,11 @@ namespace WindowsFormsApp1
             botClient.OnMessage += Message;
             botClient.OnCallbackQuery += BotClient_OnCallbackQuery;
             botClient.StartReceiving();
+        }
+
+        public void Probe(EventHandler<MessageEventArgs> Method)
+        {
+            botClient.OnMessage += Method;
         }
 
         private async void BotClient_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
@@ -110,6 +115,18 @@ namespace WindowsFormsApp1
                 {
                 }
             }
+            await botClient.EditMessageReplyMarkupAsync(
+                chatId: e.CallbackQuery.From.Id,
+                messageId: IdMessage
+                );
+            await botClient.EditMessageTextAsync(
+                chatId: e.CallbackQuery.From.Id,
+                messageId: IdMessage,
+                text: "Выберите команду\n" +
+                    "/register - регистрация\n" +
+                    "/course - вывод курса\n" +
+                    "/balance - вывод баланса"
+                );
         }
 
         public static async void Message(object sender, MessageEventArgs e)
@@ -172,11 +189,12 @@ namespace WindowsFormsApp1
                     }
                 }
                     );
-                    await botClient.SendTextMessageAsync(
+                    var keyboard_message = await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
                         replyMarkup: keyboard,
                         text: "Выберите валюту"
                         );
+                    IdMessage = keyboard_message.MessageId;
                 }
                 else if (text == "/register")
                 {
