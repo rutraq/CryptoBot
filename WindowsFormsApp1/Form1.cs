@@ -14,7 +14,6 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             Dictionary<string, string> dict = currency.ParseJSON();
-            label1.Text = dict["lprice"];
             telegram.Bot();
             telegram.Text_for_client = "Курс XRP/USD: " + dict["lprice"];
         }
@@ -22,26 +21,7 @@ namespace WindowsFormsApp1
         private void Timer1_Tick(object sender, EventArgs e)
         {
             Dictionary<string, string> dict = currency.ParseJSON();
-            label1.Text = dict["lprice"];
             telegram.Text_for_client = "Курс XRP/USD: " + dict["lprice"];
-        }
-
-        private void TelegramToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form f = new Form();
-            f.Width = 500;
-            f.Height = 500;
-            f.Show();
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            //Cex cex = new Cex();
-            //decimal s = new decimal();
-            //Thread thread = new Thread(delegate () { s = cex.Balance_USD(); });
-            //thread.Start();
-            //thread.Join();
-            //MessageBox.Show(Convert.ToString(s));
         }
     }
 }

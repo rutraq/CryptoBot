@@ -17,8 +17,10 @@ namespace WindowsFormsApp1
         private static List<string> commands = new List<string>() { "/course", "/balance", "/register" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<string, string> logs = new Dictionary<string, string>();
+        private static string messageFromUser;
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
+        public static string MessageFromUser { get => messageFromUser; set => messageFromUser = value; }
 
         public void Bot()
         {
