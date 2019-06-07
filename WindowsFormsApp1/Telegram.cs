@@ -43,6 +43,7 @@ namespace WindowsFormsApp1
             Cex cex = new Cex();
             if (currency == "USD")
             {
+                var order = cex.OrderBook();
                 try
                 {
                     try

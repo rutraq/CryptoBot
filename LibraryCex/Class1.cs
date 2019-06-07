@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibraryCex
 {
@@ -41,12 +37,11 @@ namespace LibraryCex
             return xrpBalance;
         }
 
-        public decimal LastPrice(string user_id, string key, string secret_key)
+        public OrderBook OrderBook()
         {
-            ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
-            CexClient client = new CexClient(credentials);
-            var lastPrice = client.GetLastPriceAsync(SymbolPairs.BTC_USD);
-            return lastPrice.Result;
+            CexClient client = new CexClient();
+            var orderBook = client.GetOrderBookAsync(SymbolPairs.XRP_USD, 23555).Result;
+            return orderBook;
         }
     }
 }
