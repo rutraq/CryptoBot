@@ -16,7 +16,7 @@ namespace WindowsFormsApp1
         public static string text_for_client = "";
         private static List<string> commands = new List<string>() { "/course", "/balance", "/register" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
-        private static Dictionary<string, string> logs = new Dictionary<string, string>();
+        private static Dictionary<long, int> infoForDelete = new Dictionary<long, int>();
         private static int IdMessage;
 
 
@@ -43,7 +43,6 @@ namespace WindowsFormsApp1
             Cex cex = new Cex();
             if (currency == "USD")
             {
-                var order = cex.OrderBook();
                 try
                 {
                     try
@@ -118,16 +117,17 @@ namespace WindowsFormsApp1
             }
             await botClient.EditMessageReplyMarkupAsync(
                 chatId: e.CallbackQuery.From.Id,
-                messageId: IdMessage
+                messageId: infoForDelete[e.CallbackQuery.From.Id]
                 );
             await botClient.EditMessageTextAsync(
                 chatId: e.CallbackQuery.From.Id,
-                messageId: IdMessage,
+                messageId: infoForDelete[e.CallbackQuery.From.Id],
                 text: "Выберите команду\n" +
                     "/register - регистрация\n" +
                     "/course - вывод курса\n" +
                     "/balance - вывод баланса"
                 );
+            infoForDelete.Remove(e.CallbackQuery.From.Id);
         }
 
         public static async void Message(object sender, MessageEventArgs e)
@@ -195,6 +195,7 @@ namespace WindowsFormsApp1
                         replyMarkup: keyboard,
                         text: "Выберите валюту"
                         );
+                    infoForDelete[e.Message.Chat.Id] = keyboard_message.MessageId;
                     IdMessage = keyboard_message.MessageId;
                 }
                 else if (text == "/register")
