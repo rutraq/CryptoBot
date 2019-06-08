@@ -36,5 +36,11 @@ namespace LibraryCex
             }
             return xrpBalance;
         }
+        public OrderBook Order()
+        {
+            CexClient client = new CexClient();
+            var book = client.GetOrderBookAsync(SymbolPairs.XRP_USD);
+            return book.Result;
+        }
     }
 }

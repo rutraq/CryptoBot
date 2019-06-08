@@ -12,9 +12,14 @@ namespace WindowsFormsApp1
 {
     class Telegram
     {
+        private static string startText = "Выберите команду\n" +
+                    "/register - регистрация\n" +
+                    "/course - вывод курса\n" +
+                    "/balance - вывод баланса\n" +
+                    "/info - Информация о рынке";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/course", "/balance", "/register" };
+        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<long, int> infoForDelete = new Dictionary<long, int>();
         private static int IdMessage;
@@ -115,19 +120,22 @@ namespace WindowsFormsApp1
                 {
                 }
             }
-            await botClient.EditMessageReplyMarkupAsync(
-                chatId: e.CallbackQuery.From.Id,
-                messageId: infoForDelete[e.CallbackQuery.From.Id]
-                );
-            await botClient.EditMessageTextAsync(
-                chatId: e.CallbackQuery.From.Id,
-                messageId: infoForDelete[e.CallbackQuery.From.Id],
-                text: "Выберите команду\n" +
-                    "/register - регистрация\n" +
-                    "/course - вывод курса\n" +
-                    "/balance - вывод баланса"
-                );
-            infoForDelete.Remove(e.CallbackQuery.From.Id);
+            try
+            {
+                await botClient.EditMessageReplyMarkupAsync(
+                        chatId: e.CallbackQuery.From.Id,
+                        messageId: infoForDelete[e.CallbackQuery.From.Id]
+                        );
+                await botClient.EditMessageTextAsync(
+                    chatId: e.CallbackQuery.From.Id,
+                    messageId: infoForDelete[e.CallbackQuery.From.Id],
+                    text: startText
+                    );
+                infoForDelete.Remove(e.CallbackQuery.From.Id);
+            }
+            catch (KeyNotFoundException)
+            {
+            }
         }
 
         public static async void Message(object sender, MessageEventArgs e)
@@ -166,10 +174,7 @@ namespace WindowsFormsApp1
                 {
                     await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
-                        text: "Выберите команду\n" +
-                        "/register - регистрация\n" +
-                        "/course - вывод курса\n" +
-                        "/balance - вывод баланса"
+                        text: startText
                         );
                 }
                 else if (text == "/course")
@@ -217,6 +222,16 @@ namespace WindowsFormsApp1
                                     );
                     }
                 }
+                else if (text == "/info")
+                {
+                    Cex cex = new Cex();
+                    var orderBook = cex.Order();
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: $"Объём на покупку: {orderBook.SellTotal} XRP\n" +
+                                $"Объём на продажу: {orderBook.BuyTotal} USD"
+                        );
+                }
             }
             else
             {
@@ -231,10 +246,7 @@ namespace WindowsFormsApp1
                 register.Remove(Convert.ToInt32(e.Message.Chat.Id));
                 await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
-                        text: "Выберите команду\n" +
-                        "/register - регистрация\n" +
-                        "/course - вывод курса\n" +
-                        "/balance - вывод баланса"
+                        text: startText
                         );
                 var txt = text.Split(',').Select(x => x.Where(y => !Char.IsWhiteSpace(y))).Select(x => string.Concat(x)).ToList();
                 int username = Convert.ToInt32(e.Message.Chat.Id);

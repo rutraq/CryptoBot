@@ -11,6 +11,7 @@ namespace WindowsFormsApp1
     {
         GetCurrency currency = new GetCurrency();
         Telegram telegram = new Telegram();
+        Cex cex = new Cex();
         private string userMessage = "";
         public Form1()
         {
