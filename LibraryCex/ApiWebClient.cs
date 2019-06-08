@@ -57,15 +57,17 @@ namespace LibraryCex
             var relativeUrl = CreateRelativeUrl(command);
 
             using (var client = CreateHttpClient())
-            using (var response = await (cancellationToken.HasValue ? client.GetAsync(relativeUrl, cancellationToken.Value) : client.GetAsync(command)))
             {
-                var json = await response.Content.ReadAsStringAsync();
+                using (var response = await (cancellationToken.HasValue ? client.GetAsync(relativeUrl, cancellationToken.Value) : client.GetAsync(command)))
+                {
+                    var json = await response.Content.ReadAsStringAsync();
 
-                var result = JObject.Parse(json);
+                    var result = JObject.Parse(json);
 
-                ThrowIfError(response, result);
+                    ThrowIfError(response, result);
 
-                return result;
+                    return result;
+                }
             }
         }
 
@@ -141,12 +143,14 @@ namespace LibraryCex
             where TEntity : EntityBase
         {
             using (var client = CreateHttpClient())
-            using (var response = await (cancellationToken.HasValue ? client.GetAsync(command, cancellationToken.Value) : client.GetAsync(command)))
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<TEntity>(json);
+                using (var response = await (cancellationToken.HasValue ? client.GetAsync(command, cancellationToken.Value) : client.GetAsync(command)))
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<TEntity>(json);
 
-                return result;
+                    return result;
+                }
             }
         }
 
@@ -204,7 +208,9 @@ namespace LibraryCex
         private string CreateRelativeUrl(string command)
         {
             if (!command.EndsWith("/") && !command.Contains('?'))
+            {
                 command += "/";
+            }
 
             string relativeUrl = string.Empty;
 
@@ -247,5 +253,6 @@ namespace LibraryCex
             }
 
         }
+
     }
 }

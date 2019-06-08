@@ -6,6 +6,26 @@ using System.Threading.Tasks;
 
 namespace LibraryCex
 {
+    public enum Symbols
+    {
+        BTC,
+        USD,
+        EUR,
+        ETH,
+        RUB,
+        GBP,
+        GHS,
+        BCH,
+        DASH,
+        XRP,
+        ZEC,
+        BTG,
+        XLM,
+        GUSD,
+        OMG,
+        MHC
+    }
+
     public enum SymbolPairs
     {
         BTC_USD,
@@ -37,14 +57,15 @@ namespace LibraryCex
         BTG_USD,
         BTG_EUR,
         BTG_BTC,
-        QASH_BTC,
-        QASH_ETH,
         GUSD_USD,
         GUSD_EUR,
         OMG_USD,
         OMG_EUR,
         OMG_BTC,
         MHC_BTC,
-        MHC_ETH
+        MHC_ETH,
+        MHC_USD,
+        MHC_EUR,
+        MHC_GBP
     }
 }
