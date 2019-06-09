@@ -136,6 +136,9 @@ namespace WindowsFormsApp1
             catch (KeyNotFoundException)
             {
             }
+            catch (MessageIsNotModifiedException)
+            {
+            }
         }
 
         public static async void Message(object sender, MessageEventArgs e)
