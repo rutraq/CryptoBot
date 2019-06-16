@@ -17,7 +17,7 @@ namespace WindowsFormsApp1
                     "/course - вывод курса\n" +
                     "/balance - вывод баланса\n" +
                     "/info - Информация о рынке\n" +
-                    "/sum - установка суммы ставки";
+                    "/sum - Установка суммы ставки в XRP. Минимум - 40";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
         private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum" };
@@ -252,11 +252,16 @@ namespace WindowsFormsApp1
                 else if (text == "/info")
                 {
                     Cex cex = new Cex();
+                    InfoFromStock infoFromStock = new InfoFromStock();
+                    GetCurrency currency = new GetCurrency();
                     var orderBook = cex.Order();
+                    decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
+                    decimal asks = infoFromStock.GetAsks(8);
+                    decimal bids = infoFromStock.GetBids(8) / course;
                     await botClient.SendTextMessageAsync(
                                 chatId: e.Message.Chat,
-                                text: $"Объём на покупку: {orderBook.SellTotal} XRP\n" +
-                                $"Объём на продажу: {orderBook.BuyTotal} USD"
+                                text: $"Объём на покупку: {bids} XRP\n" +
+                                $"Объём на продажу: {asks} XRP"
                         );
                 }
                 else if (text == "/sum")
@@ -291,17 +296,24 @@ namespace WindowsFormsApp1
                 try
                 {
                     int sum = Convert.ToInt32(e.Message.Text);
+                    if (sum < 40)
+                    {
+                        throw new FormatException();
+                    }
                     data.Insert(Convert.ToInt32(e.Message.Chat.Id), sum);
                     addSum.Remove(e.Message.Chat.Id);
                     await botClient.SendTextMessageAsync(
                             chatId: e.Message.Chat,
                             text: "Ваша сумма для ставок принята");
+                    await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: startText);
                 }
                 catch (FormatException)
                 {
                     await botClient.SendTextMessageAsync(
                             chatId: e.Message.Chat,
-                            text: "Сумма должна быть указана целым числом\n" +
+                            text: "Сумма должна быть указана целым числом и быть больше либо равно 40\n" +
                             "Попробуйте ещё раз /sum");
                     addSum.Remove(e.Message.Chat.Id);
                 }
