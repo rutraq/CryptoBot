@@ -16,13 +16,14 @@ namespace WindowsFormsApp1
                     "/register - регистрация\n" +
                     "/course - вывод курса\n" +
                     "/balance - вывод баланса\n" +
-                    "/info - Информация о рынке";
+                    "/info - Информация о рынке\n" +
+                    "/sum - установка суммы ставки";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info" };
+        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<long, int> infoForDelete = new Dictionary<long, int>();
-        private static int IdMessage;
+        private static List<long> addSum = new List<long>();
 
 
         public string Text_for_client { get => text_for_client; set => text_for_client = value; }
@@ -146,7 +147,10 @@ namespace WindowsFormsApp1
             DataBase data = new DataBase();
             List<string> info = data.Getinfo(Convert.ToInt32(e.Message.Chat.Id));
             var text = e?.Message?.Text;
-            bool check = true;
+            bool checkReg = true;
+            bool checkSum = true;
+
+            //Check registration
             try
             {
                 if (register[Convert.ToInt32(e.Message.Chat.Id)] == true)
@@ -154,7 +158,7 @@ namespace WindowsFormsApp1
                     Regex reg = new Regex(@"^\w+, \w+, \w+$");
                     if (!reg.IsMatch(text))
                     {
-                        check = false;
+                        checkReg = false;
                         register.Remove(Convert.ToInt32(e.Message.Chat.Id));
                         await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
@@ -165,9 +169,30 @@ namespace WindowsFormsApp1
             }
             catch (KeyNotFoundException)
             {
-                check = false;
+                checkReg = false;
             }
-            if (!check)
+
+            //check sum
+            if (!addSum.Contains(e.Message.Chat.Id))
+            { 
+                checkSum = false;
+            }
+            else
+            {
+                if (info.Count == 0)
+                {
+                    await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: "Вы не зарегистрированы\n" +
+                            "Пройдите регистрацию для выполнения этой команды"
+                            );
+                    checkSum = false;
+                    addSum.Remove(e.Message.Chat.Id);
+                }
+            }
+
+            //all messages
+            if (!checkReg && !checkSum)
             {
                 if (text == null)
                 {
@@ -204,7 +229,6 @@ namespace WindowsFormsApp1
                         text: "Выберите валюту"
                         );
                     infoForDelete[e.Message.Chat.Id] = keyboard_message.MessageId;
-                    IdMessage = keyboard_message.MessageId;
                 }
                 else if (text == "/register")
                 {
@@ -235,8 +259,15 @@ namespace WindowsFormsApp1
                                 $"Объём на продажу: {orderBook.BuyTotal} USD"
                         );
                 }
+                else if (text == "/sum")
+                {
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: "Введите сумму для ставок");
+                    addSum.Add(e.Message.Chat.Id);
+                }
             }
-            else
+            else if (checkReg)
             {
                 await botClient.SendTextMessageAsync(
                         chatId: e.Message.Chat,
@@ -254,6 +285,26 @@ namespace WindowsFormsApp1
                 var txt = text.Split(',').Select(x => x.Where(y => !Char.IsWhiteSpace(y))).Select(x => string.Concat(x)).ToList();
                 int username = Convert.ToInt32(e.Message.Chat.Id);
                 data.Insert(username, txt[0], txt[1], txt[2]);
+            }
+            else if (checkSum)
+            {
+                try
+                {
+                    int sum = Convert.ToInt32(e.Message.Text);
+                    data.Insert(Convert.ToInt32(e.Message.Chat.Id), sum);
+                    addSum.Remove(e.Message.Chat.Id);
+                    await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: "Ваша сумма для ставок принята");
+                }
+                catch (FormatException)
+                {
+                    await botClient.SendTextMessageAsync(
+                            chatId: e.Message.Chat,
+                            text: "Сумма должна быть указана целым числом\n" +
+                            "Попробуйте ещё раз /sum");
+                    addSum.Remove(e.Message.Chat.Id);
+                }
             }
         }
     }

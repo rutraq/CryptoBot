@@ -31,5 +31,13 @@ namespace WindowsFormsApp1
             conn.Close();
             return info;
         }
+        public void Insert(int username, int sum)
+        {
+            NpgsqlConnection conn = new NpgsqlConnection("Server=isilo.db.elephantsql.com;Port=5432;User Id=eiezunnd;Password=xoGAEzBfYFPTBbGLvTtV9ZU3Sdx2jsnb;Database=eiezunnd;");
+            conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand($"update users set sum={sum} where username={username}", conn);
+            command.ExecuteNonQuery();
+            conn.Close();
+        }
     }
 }
