@@ -39,5 +39,19 @@ namespace WindowsFormsApp1
             command.ExecuteNonQuery();
             conn.Close();
         }
+        public int GetSum(int username)
+        {
+            int sum = 0;
+            NpgsqlConnection conn = new NpgsqlConnection("Server=isilo.db.elephantsql.com;Port=5432;User Id=eiezunnd;Password=xoGAEzBfYFPTBbGLvTtV9ZU3Sdx2jsnb;Database=eiezunnd;");
+            conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand($"select sum from users where username='{username}'", conn);
+            NpgsqlDataReader dr = command.ExecuteReader();
+            while (dr.Read())
+            {
+                sum = dr.GetInt32(0);
+            }
+            conn.Close();
+            return sum;
+        }
     }
 }

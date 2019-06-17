@@ -5,14 +5,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LibraryCex;
+using Telegram.Bot.Args;
 
 namespace WindowsFormsApp1
 {
     class MakeBids
     {
         bool start;
+        int username;
 
         public bool Start { get => start; set => start = value; }
+        public int Username { get => username; set => username = value; }
 
         public string Analize()
         {
@@ -63,11 +66,21 @@ namespace WindowsFormsApp1
                         decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
                         if (firstCheck == "higher")
                         {
-                            
+                            double newCourse = Convert.ToDouble(course) + 0.01;
+                            DataBase data = new DataBase();
+                            List<string> info = data.Getinfo(username);
+                            PlaceOrder order = new PlaceOrder();
+                            int amount = data.GetSum(username);
+                            order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
                         }
-                        else if (firstCheck == "nothing")
+                        else if (firstCheck == "lower")
                         {
-
+                            double newCourse = Convert.ToDouble(course) - 0.01;
+                            DataBase data = new DataBase();
+                            List<string> info = data.Getinfo(username);
+                            PlaceOrder order = new PlaceOrder();
+                            int amount = data.GetSum(username);
+                            order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
                         }
                         else
                         {
