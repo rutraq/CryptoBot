@@ -7,6 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using System.Text.RegularExpressions;
 using Telegram.Bot.Exceptions;
 using System.Linq;
+using System.Threading;
 
 namespace WindowsFormsApp1
 {
@@ -17,10 +18,12 @@ namespace WindowsFormsApp1
                     "/course - вывод курса\n" +
                     "/balance - вывод баланса\n" +
                     "/info - Информация о рынке\n" +
-                    "/sum - Установка суммы ставки в XRP. Минимум - 40";
+                    "/sum - Установка суммы ставки в XRP. Минимум - 40\n" +
+                    "/botStart - Запуск бота\n" +
+                    "/botStop - Остановить бота";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum" };
+        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum", "/botstart", "/botStop" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<long, int> infoForDelete = new Dictionary<long, int>();
         private static List<long> addSum = new List<long>();
@@ -254,17 +257,14 @@ namespace WindowsFormsApp1
                     Cex cex = new Cex();
                     InfoFromStock infoFromStock = new InfoFromStock();
                     GetCurrency currency = new GetCurrency();
-                    MakeBids makeBids = new MakeBids();
                     var orderBook = cex.Order();
                     decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
                     decimal asks = infoFromStock.GetAsks(8);
                     decimal bids = infoFromStock.GetBids(8) / course;
-                    string answer = makeBids.Analize();
                     await botClient.SendTextMessageAsync(
                                 chatId: e.Message.Chat,
                                 text: $"Объём на покупку: {bids} XRP\n" +
-                                $"Объём на продажу: {asks} XRP\n" +
-                                $"Ответ: {answer}"
+                                $"Объём на продажу: {asks} XRP"
                         );
                 }
                 else if (text == "/sum")
@@ -273,6 +273,13 @@ namespace WindowsFormsApp1
                                 chatId: e.Message.Chat,
                                 text: "Введите сумму для ставок");
                     addSum.Add(e.Message.Chat.Id);
+                }
+                else if (text == "botStart")
+                {
+                    MakeBids makeBids = new MakeBids();
+                    makeBids.Start = true;
+                    Thread th = new Thread(makeBids.Bid);
+                    th.Start();
                 }
             }
             else if (checkReg)

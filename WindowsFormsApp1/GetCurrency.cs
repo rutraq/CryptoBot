@@ -9,6 +9,7 @@ namespace WindowsFormsApp1
     {
         public string GetCur()
         {
+
             StreamReader strr = new StreamReader(WebRequest.Create(@"https://cex.io/api/last_price/XRP/USD").GetResponse().GetResponseStream());
             return strr.ReadToEnd();
         }
