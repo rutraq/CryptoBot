@@ -72,6 +72,7 @@
     <Compile Include="Ticker.cs" />
     <Compile Include="Timestamp.cs" />
     <Compile Include="Trade.cs" />
+    <Compile Include="TradeHistory.cs" />
     <Compile Include="TradeId.cs" />
   </ItemGroup>
   <ItemGroup>

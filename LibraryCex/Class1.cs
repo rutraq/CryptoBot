@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace LibraryCex
 {
@@ -42,6 +45,16 @@ namespace LibraryCex
             CexClient client = new CexClient();
             var book = client.GetOrderBookAsync(SymbolPairs.XRP_USD);
             return book.Result;
+        }
+        private string GetTradeHistory()
+        {
+            StreamReader strr = new StreamReader(WebRequest.Create(@"https://cex.io/api/last_price/XRP/USD").GetResponse().GetResponseStream());
+            return strr.ReadToEnd();
+        }
+        public List<TradeHistory> ParseJSON()
+        {
+            var dict = JsonConvert.DeserializeObject<List<TradeHistory>>(GetTradeHistory());
+            return dict;
         }
     }
 }
