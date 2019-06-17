@@ -56,5 +56,20 @@ namespace LibraryCex
             var dict = JsonConvert.DeserializeObject<List<TradeHistory>>(History());
             return dict;
         }
+        public void Place(string user_id, string key, string secret_key, decimal price, decimal amount, string type)
+        {
+            ApiCredentials credentials = new ApiCredentials(user_id, key, secret_key);
+            CexClient client = new CexClient(credentials);
+            if (type == "buy")
+            {
+                Order order = new Order(SymbolPairs.XRP_USD, price, amount, OrderType.Buy);
+                client.Account.PlaceLimitOrder(order);
+            }
+            else
+            {
+                Order order = new Order(SymbolPairs.XRP_USD, price, amount, OrderType.Sell);
+                client.Account.PlaceLimitOrder(order);
+            }
+        }
     }
 }

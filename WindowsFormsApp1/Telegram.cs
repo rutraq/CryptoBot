@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
                     "/botStop - Остановить бота";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
-        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum", "/botstart", "/botStop" };
+        private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum", "/botStart", "/botStop" };
         private static Dictionary<int, bool> register = new Dictionary<int, bool>();
         private static Dictionary<long, int> infoForDelete = new Dictionary<long, int>();
         private static List<long> addSum = new List<long>();
@@ -274,12 +274,24 @@ namespace WindowsFormsApp1
                                 text: "Введите сумму для ставок");
                     addSum.Add(e.Message.Chat.Id);
                 }
-                else if (text == "botStart")
+                else if (text == "/botStart")
                 {
                     MakeBids makeBids = new MakeBids();
                     makeBids.Start = true;
+                    makeBids.Username = Convert.ToInt32(e.Message.Chat.Id);
                     Thread th = new Thread(makeBids.Bid);
                     th.Start();
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: "Бот запущен");
+                }
+                else if (text == "/botStop")
+                {
+                    MakeBids makeBids = new MakeBids();
+                    makeBids.Start = false;
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: "Бот остановлен");
                 }
             }
             else if (checkReg)
