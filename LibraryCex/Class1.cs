@@ -46,14 +46,14 @@ namespace LibraryCex
             var book = client.GetOrderBookAsync(SymbolPairs.XRP_USD);
             return book.Result;
         }
-        private string GetTradeHistory()
+        private string History()
         {
-            StreamReader strr = new StreamReader(WebRequest.Create(@"https://cex.io/api/last_price/XRP/USD").GetResponse().GetResponseStream());
+            StreamReader strr = new StreamReader(WebRequest.Create(@"https://cex.io/api/trade_history/XRP/USD/").GetResponse().GetResponseStream());
             return strr.ReadToEnd();
         }
-        public List<TradeHistory> ParseJSON()
+        public List<TradeHistory> GetTradeHistory()
         {
-            var dict = JsonConvert.DeserializeObject<List<TradeHistory>>(GetTradeHistory());
+            var dict = JsonConvert.DeserializeObject<List<TradeHistory>>(History());
             return dict;
         }
     }

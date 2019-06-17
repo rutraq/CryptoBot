@@ -254,14 +254,17 @@ namespace WindowsFormsApp1
                     Cex cex = new Cex();
                     InfoFromStock infoFromStock = new InfoFromStock();
                     GetCurrency currency = new GetCurrency();
+                    MakeBids makeBids = new MakeBids();
                     var orderBook = cex.Order();
                     decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
                     decimal asks = infoFromStock.GetAsks(8);
                     decimal bids = infoFromStock.GetBids(8) / course;
+                    string answer = makeBids.Analize();
                     await botClient.SendTextMessageAsync(
                                 chatId: e.Message.Chat,
                                 text: $"Объём на покупку: {bids} XRP\n" +
-                                $"Объём на продажу: {asks} XRP"
+                                $"Объём на продажу: {asks} XRP\n" +
+                                $"Ответ: {answer}"
                         );
                 }
                 else if (text == "/sum")

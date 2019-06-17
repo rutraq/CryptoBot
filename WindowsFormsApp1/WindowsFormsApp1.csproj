@@ -87,6 +87,7 @@
     </Compile>
     <Compile Include="GetCurrency.cs" />
     <Compile Include="InfoFromStock.cs" />
+    <Compile Include="MakeBids.cs" />
     <Compile Include="MyAccount.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
