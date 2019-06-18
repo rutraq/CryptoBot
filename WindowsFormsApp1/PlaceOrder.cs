@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
                 var pars = new NameValueCollection();
 
                 // Добавляем необходимые параметры в виде пар ключ, значение
-                pars.Add("key", key);
+                pars.Add("key", "74FTgNUB0xDlXKB17us6EOPqQ");
                 pars.Add("signature", sg.Compute(username, key, secretKey));
                 pars.Add("nonce", Convert.ToString(unixTime));
                 pars.Add("type", type);

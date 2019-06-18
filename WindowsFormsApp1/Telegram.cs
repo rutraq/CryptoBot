@@ -279,11 +279,16 @@ namespace WindowsFormsApp1
                     MakeBids makeBids = new MakeBids();
                     makeBids.Start = true;
                     makeBids.Username = Convert.ToInt32(e.Message.Chat.Id);
-                    Thread th = new Thread(()=> { makeBids.Bid(); });
-                    th.Start();
                     await botClient.SendTextMessageAsync(
                                 chatId: e.Message.Chat,
                                 text: "Бот запущен");
+                    makeBids.Bid();
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: "Ставка сделана");
+                    await botClient.SendTextMessageAsync(
+                                chatId: e.Message.Chat,
+                                text: startText);
                 }
                 else if (text == "/botStop")
                 {

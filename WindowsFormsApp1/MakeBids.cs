@@ -55,49 +55,34 @@ namespace WindowsFormsApp1
         {
             for (; ; )
             {
-                if (start)
+                string firstCheck = Analize();
+                Thread.Sleep(2000);
+                string secondCheck = Analize();
+                if (firstCheck == secondCheck)
                 {
-                    string firstCheck = Analize();
-                    Thread.Sleep(2000);
-                    string secondCheck = Analize();
-                    if (firstCheck == secondCheck)
+                    GetCurrency currency = new GetCurrency();
+                    decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
+                    if (firstCheck == "higher")
                     {
-                        GetCurrency currency = new GetCurrency();
-                        decimal course = Convert.ToDecimal(currency.ParseJSON()["lprice"].Replace(".", ","));
-                        if (firstCheck == "higher")
-                        {
-                            double newCourse = Convert.ToDouble(course) + 0.01;
-                            DataBase data = new DataBase();
-                            List<string> info = data.Getinfo(username);
-                            PlaceOrder order = new PlaceOrder();
-                            int amount = data.GetSum(username);
-                            order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
-                        }
-                        else if (firstCheck == "lower")
-                        {
-                            double newCourse = Convert.ToDouble(course) - 0.01;
-                            DataBase data = new DataBase();
-                            List<string> info = data.Getinfo(username);
-                            PlaceOrder order = new PlaceOrder();
-                            int amount = data.GetSum(username);
-                            order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
-                        }
-                        else
-                        {
-                            Thread.Sleep(4000);
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(4000);
+                        double newCourse = Convert.ToDouble(course) + 0.01;
+                        DataBase data = new DataBase();
+                        List<string> info = data.Getinfo(username);
+                        PlaceOrder order = new PlaceOrder();
+                        int amount = data.GetSum(username);
+                        order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
                         break;
                     }
-                }
-                else
-                {
-                    break;
-                }
+                    else if (firstCheck == "lower")
+                    {
+                        double newCourse = Convert.ToDouble(course) - 0.01;
+                        DataBase data = new DataBase();
+                        List<string> info = data.Getinfo(username);
+                        PlaceOrder order = new PlaceOrder();
+                        int amount = data.GetSum(username);
+                        order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
+                        break;
+                    }
+                } 
             }
         }
     }
