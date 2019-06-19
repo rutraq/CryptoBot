@@ -19,7 +19,7 @@ namespace WindowsFormsApp1
                     "/balance - вывод баланса\n" +
                     "/info - Информация о рынке\n" +
                     "/sum - Установка суммы ставки в XRP. Минимум - 40\n" +
-                    "/MakeBid - Запуск бота";
+                    "/MakeBid - Совершение сделки";
         private static ITelegramBotClient botClient;
         public static string text_for_client = "";
         private static List<string> commands = new List<string>() { "/course", "/balance", "/register", "/info", "/sum", "/MakeBid" };

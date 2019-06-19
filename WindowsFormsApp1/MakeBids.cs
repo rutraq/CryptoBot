@@ -67,11 +67,6 @@ namespace WindowsFormsApp1
                     if (firstCheck == "higher")
                     {
                         double newCourse = Convert.ToDouble(course) + 0.01;
-                        //DataBase data = new DataBase();
-                        //List<string> info = data.Getinfo(username);
-                        //PlaceOrder order = new PlaceOrder();
-                        //int amount = data.GetSum(username);
-                        //order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
                         StreamWriter sw = new StreamWriter("username.txt");
                         sw.WriteLine($"{username} {Convert.ToString(newCourse).Replace(",", ".")}");
                         sw.Close();
@@ -81,11 +76,6 @@ namespace WindowsFormsApp1
                     else if (firstCheck == "lower")
                     {
                         double newCourse = Convert.ToDouble(course) - 0.01;
-                        //DataBase data = new DataBase();
-                        //List<string> info = data.Getinfo(username);
-                        //PlaceOrder order = new PlaceOrder();
-                        //int amount = data.GetSum(username);
-                        //order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
                         StreamWriter sw = new StreamWriter("username.txt");
                         sw.WriteLine($"{username} {Convert.ToString(newCourse).Replace(",", ".")}");
                         sw.Close();
