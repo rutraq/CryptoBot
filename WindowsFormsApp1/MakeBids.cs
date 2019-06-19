@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -65,21 +67,29 @@ namespace WindowsFormsApp1
                     if (firstCheck == "higher")
                     {
                         double newCourse = Convert.ToDouble(course) + 0.01;
-                        DataBase data = new DataBase();
-                        List<string> info = data.Getinfo(username);
-                        PlaceOrder order = new PlaceOrder();
-                        int amount = data.GetSum(username);
-                        order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
+                        //DataBase data = new DataBase();
+                        //List<string> info = data.Getinfo(username);
+                        //PlaceOrder order = new PlaceOrder();
+                        //int amount = data.GetSum(username);
+                        //order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "buy");
+                        StreamWriter sw = new StreamWriter("username.txt");
+                        sw.WriteLine($"{username} {Convert.ToString(newCourse).Replace(",", ".")}");
+                        sw.Close();
+                        Process.Start(@"Buy.exe");
                         break;
                     }
                     else if (firstCheck == "lower")
                     {
                         double newCourse = Convert.ToDouble(course) - 0.01;
-                        DataBase data = new DataBase();
-                        List<string> info = data.Getinfo(username);
-                        PlaceOrder order = new PlaceOrder();
-                        int amount = data.GetSum(username);
-                        order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
+                        //DataBase data = new DataBase();
+                        //List<string> info = data.Getinfo(username);
+                        //PlaceOrder order = new PlaceOrder();
+                        //int amount = data.GetSum(username);
+                        //order.MakeOrder(info[0], info[1], info[2], Convert.ToString(amount), Convert.ToString(newCourse), "sell");
+                        StreamWriter sw = new StreamWriter("username.txt");
+                        sw.WriteLine($"{username} {Convert.ToString(newCourse).Replace(",", ".")}");
+                        sw.Close();
+                        Process.Start(@"Sell.exe");
                         break;
                     }
                 } 
